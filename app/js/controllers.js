@@ -67,7 +67,7 @@ angular.module('ivkalendar.controllers', ['ui.calendar', 'ui.bootstrap'])
                 title: "moj repeating",
                 start: new Date(y, m, d + 1, 10, 0),
                 end: new Date(y, m, d + 1, 10, 30),
-                repeatingEvent: 0,
+                repeatingEvent: $scope.repeatingDays[1],
                 className: ['repeatEvent']
             });
 
@@ -79,7 +79,7 @@ angular.module('ivkalendar.controllers', ['ui.calendar', 'ui.bootstrap'])
             /* alert on eventClick */
             $scope.alertOnEventClick = function (event, allDay, jsEvent, view) {
                 console.log("event clicked: " + event.id);
-                if ($scope.dayAgendaShowing) {
+                if (jsEvent.name === "agendaDay") {
                     $scope.newEvent = event;
                     $scope.newEvent.time = event.start;
                     $scope.addEventShowing = true;
@@ -405,7 +405,7 @@ angular.module('ivkalendar.controllers', ['ui.calendar', 'ui.bootstrap'])
 
                     function findEventsByDay(day) {
                         return  _.filter($scope.events.repeating, function (e) {
-                            return e.repeatingEvent === day;
+                            return e.repeatingEvent.value === day;
                         });
                     }
 
