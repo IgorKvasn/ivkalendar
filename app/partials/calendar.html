@@ -1,0 +1,83 @@
+<div class="container-fluid" ng-hide="addEventShowing" style="margin-top: 20px;">
+
+    <div class="row">
+        <div class="container-fluid" ng-hide="dayAgendaShowing">
+            <div class="row">
+                <switch class="col-xs-1 col-sm-1" ng-model="calendarView"></switch>
+                <div class="btn btn-default pull-right" ng-click="calendarToday()">Dnes</div>
+                <div class="btn btn-default pull-right" ng-click="calendarNext()">&gt;</div>
+                <div class="btn btn-default pull-right" ng-click="calendarBack()">&lt;</div>
+            </div>
+        </div>
+        <div class="container-fluid" ng-show="dayAgendaShowing" style="margin-bottom: 10px;">
+
+            <div class="btn btn-primary" ng-click="backToCalendar()">Späť</div>
+            <div class="btn btn-success pull-right" ng-click="addEvent()">Pridaj</div>
+        </div>
+        <div ui-calendar="uiConfig.calendar" class="span8 calendar" config="uiConfig.calendar"
+             ng-model="eventSources"
+             calendar="myCalendar"></div>
+    </div>
+
+</div>
+
+<div ng-show="addEventShowing">
+    <div>
+        <div>
+            <div class="container">
+                <!-- <div class="row clearfix">
+                     <div class="col-xs-12 col-sm-12 column">
+                         <h2> Pridaj </h2>
+                     </div>
+                 </div>-->
+                <div class="row clearfix">
+                    <div class="col-xs-12 col-sm-12 column">
+                        <form role="form">
+                            <div class="form-group">
+                                <label for="inputPartner">S kým</label><input type="text" placeholder="s kým" required="true"
+                                                                              ng-model="newEvent.partner"
+                                                                              class="form-control" id="inputPartner"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputTmeStart">Čas od</label><input type="time" placeholder="čas od" required="true"
+                                                                                 ng-model="newEvent.timeStart" ng-class="{dateError:isDateValid==false}"
+                                                                                 class="form-control"
+                                                                                 id="inputTmeStart"/>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="inputtTmeEnd">Čas do</label><input type="time" placeholder="čas do" required="true"
+                                                                               ng-model="newEvent.timeEnd" ng-class="{dateError:isDateValid==false}"
+                                                                               class="form-control" id="inputtTmeEnd"/>
+                            </div>
+
+                            <div class="form-group">
+
+                                <select id="inputRepeat"
+                                        ng-model="newEvent.repeatingEvent" ng-init="newEvent.repeatingEvent = repeatingDays[0]" ng-options="day.name for day in repeatingDays"
+                                        class="form-control">
+                                </select>
+
+                            </div>
+
+                            <div class="container-fluid">
+                                <button type="submit" class="btn btn-success col-xs-3"
+                                        ng-click="confirmEventCreation()">
+                                    Potvrď
+                                </button>
+                                <button type="button" class="btn btn-danger col-xs-3 col-xs-offset-1" ng-show="newEvent.id"
+                                        ng-click="deleteEvent()">
+                                    Vymaž
+                                </button>
+                                <button type="button" class="btn btn-warning pull-right"
+                                        ng-click="cancelEventCreation()">
+                                    Zruš
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

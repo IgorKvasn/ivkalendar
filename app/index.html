@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>My AngularJS App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <!-- build:css css/ivkalendar.css -->
+    <link rel="stylesheet" href="../public/components/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="../public/components/fullcalendar/fullcalendar.css"/>
+    <link rel="stylesheet" href="../public/components/mobile-angular-ui/dist/css/mobile-angular-ui-base.min.css"/>
+    <link rel="stylesheet" href="../public/components/mobile-angular-ui/dist/css/mobile-angular-ui-desktop.min.css"/>
+
+    <link rel="stylesheet" href="css/app.css"/>
+    <!-- endbuild -->
+</head>
+<body>
+
+
+<!--workaround for error message truncating in Chrome-->
+<script>
+    //5th parameter is the key one
+    window.onerror = function (errorMsg, url, lineNumber, columnNumber, errorObject) {
+        var errMsg;
+        if (errorObject && errorObject !== undefined) {
+            errMsg = errorObject.message;
+        } else {
+            errMsg = errorMsg;
+        }
+        console.log('Error: ' + errMsg);
+    }</script>
+
+<div id="mainDiv">
+
+    <!-- Sidebars -->
+
+    <div class="sidebar sidebar-left" toggleable parent-active-class="sidebar-left-in" id="mainSidebar">
+        <h1 class="app-name">Ivkalendar</h1>
+
+        <div class="scrollable">
+            <div class="scrollable-content">
+                <div class="list-group" toggle="off" bubble target="mainSidebar">
+                    <a class="list-group-item" href="#/calendar">Kalendár <i class="fa fa-chevron-right pull-right"></i></a>
+                    <a class="list-group-item" href="#/settings">Nastavenia <i class="fa fa-chevron-right pull-right"></i></a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="app">
+
+        <!-- Navbars -->
+        <div class="navbar navbar-app navbar-absolute-top">
+
+            <div class="navbar-brand navbar-brand-center" yield-to="title">
+                <span>Ivkalendar</span>
+            </div>
+
+            <div class="btn-group pull-left">
+                <div ng-click="toggle('mainSidebar')" class="btn btn-navbar sidebar-toggle">
+                    <i class="fa fa-bars"></i> Menu
+                </div>
+            </div>
+
+
+        </div>
+
+        <!--<div class="navbar navbar-app navbar-absolute-bottom">-->
+            <!--<div class="btn-group justified">-->
+                <!--<a href="#/calendar" class="btn btn-navbar btn-icon-only"><i class="fa fa-calendar  fa-navbar"></i></a>-->
+                <!--<a href="#/settings" class="btn btn-navbar btn-icon-only"><i class="fa fa-cogs fa-navbar"></i></a>-->
+            <!--</div>-->
+        <!--</div>-->
+
+        <div class="app-body" style="background-color: rgba(255, 255, 255, 0.88);">
+            <ng-view class="app-content">
+            </ng-view>
+        </div>
+    </div>
+
+
+</div>
+
+<!-- build:js js/ivkalendar.min.js -->
+<script src="../public/components/jquery/dist/jquery.min.js"></script>
+<script src="../public/components/jquery-ui/ui/minified/jquery-ui.min.js"></script>
+
+<script src="../public/components/angular/angular.js"></script>
+<script src="../public/components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+<script src="../public/components/fullcalendar/fullcalendar.js"></script>
+<script src="../public/components/fullcalendar/gcal.js"></script>
+<script src="../public/components/angular-ui-calendar/src/calendar.js"></script>
+<script src="../public/components/mobile-angular-ui/dist/js/mobile-angular-ui.min.js"></script>
+<script src="../public/components/mobile-angular-ui/dist/js/mobile-angular-ui-touch-fastclick.min.js"></script>
+<script src="../public/components/mobile-angular-ui/dist/js/mobile-angular-ui-scrollable-overthrow.min.js"></script>
+<script src="../public/components/angular-route/angular-route.min.js"></script>
+<script src="../public/components/angular-phonegap/angular-phonegap.min.js"></script>
+<script src="../public/components/underscore/underscore.js"></script>
+
+
+<script src="js/app.js"></script>
+<script src="js/controllers.js"></script>
+
+<!-- endbuild -->
+</body>
+</html>
