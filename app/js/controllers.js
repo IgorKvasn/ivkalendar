@@ -155,6 +155,11 @@ angular.module('ivkalendar.controllers', ['ui.calendar', 'ui.bootstrap'])
                         week: 'ddd d.M.', // Mon 9/7
                         day: 'dddd d.M.'  // Monday 9/7
                     },
+                    timeFormat: {
+                        agendaDay: 'HH:mm { - HH:mm}',
+                        agendaWeek: '',
+                        '':'' //this will cause to not show time on month view or week view
+                    },
                     buttonText: {
                         prev: '&lsaquo;', // <
                         next: '&rsaquo;', // >
