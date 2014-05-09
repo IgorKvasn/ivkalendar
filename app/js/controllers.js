@@ -81,6 +81,7 @@ angular.module('ivkalendar.controllers', ['ui.calendar', 'ui.bootstrap'])
                 console.log("event clicked: " + event.id);
                 if (jsEvent.name === "agendaDay") {
                     $scope.newEvent = event;
+                    $scope.newEvent.partner = event.partner + " edited";
                     $scope.newEvent.time = event.start;
                     $scope.addEventShowing = true;
                 } else {
@@ -219,7 +220,7 @@ angular.module('ivkalendar.controllers', ['ui.calendar', 'ui.bootstrap'])
             };
 
 
-            function findEventById(id) {
+            function findEventArrayById(id) {
                 var found = _.find($scope.events.oneTime, function (e) {
                     return e.id == id;
                 });
@@ -232,9 +233,17 @@ angular.module('ivkalendar.controllers', ['ui.calendar', 'ui.bootstrap'])
             }
 
             function removeEventById(id) {
-                removeEvent(findEventById(id));
+                var toBeRemoved = findEventArrayById(id);
+                for (var e in  toBeRemoved) {
+                    removeEvent(toBeRemoved[e]);
+                }
             }
 
+            function removeEventFromArray(event, array) {
+                return  _.filter(array, function (item) {
+                    return item.id !== event.id;
+                });
+            }
 
             function removeEvent(event) {
 
@@ -243,11 +252,6 @@ angular.module('ivkalendar.controllers', ['ui.calendar', 'ui.bootstrap'])
                     return;
                 }
 
-                function removeEventFromArray(event, array) {
-                    return  _.filter(array, function (item) {
-                        return item.id !== event.id;
-                    });
-                }
 
                 if (event.repeatingEvent.value === -1) {
                     //single event
@@ -272,6 +276,10 @@ angular.module('ivkalendar.controllers', ['ui.calendar', 'ui.bootstrap'])
 
                 $scope.cancelEventCreation();
             };
+
+            function isRepeatingEvent(event) {
+                return event.repeatingEvent.value !== -1
+            }
 
             $scope.confirmEventCreation = function () {
                 function generateEventsFormMonth(start, end, day, e) {
@@ -309,6 +317,31 @@ angular.module('ivkalendar.controllers', ['ui.calendar', 'ui.bootstrap'])
                     return events;
                 }
 
+                /**
+                 * editing of repeating event must be handled separately
+                 * any fronted modification to onetime event is propagated into $scope.events.oneTime, but this is not done
+                 * for repeating events, since $scope.events.repeating does not contain actual events being rendered/clicked
+                 * @param event
+                 */
+                function modifyRepeatingEvent(event) {
+                    //find such event in $scope.events.repeating
+                    var repEventsNew = _.filter($scope.events.repeating, function (e) {
+                        return e.id !== event.id;
+                    });
+                    repEventsNew.push(event);
+                    $scope.events.repeating = repEventsNew;
+                }
+
+                function removeEventFromTempRepeating(event) {
+                    for (var i in $scope.tempRepeatingEvents) {
+                        //all events in $scope.tempRepeatingEvents[i] has the same ID
+                        if ($scope.tempRepeatingEvents[i][0].id === event.id) {
+                            $scope.tempRepeatingEvents.splice(i, 1);
+                            return; //no need to continue since ID is unique, so no more arrays to be deleted will be found
+                        }
+                    }
+                }
+
                 //these two date objects are to determine TIME of an event
                 var timeStart = parseTime($scope.newEvent.timeStart);
                 var timeEnd = parseTime($scope.newEvent.timeEnd);
@@ -333,13 +366,20 @@ angular.module('ivkalendar.controllers', ['ui.calendar', 'ui.bootstrap'])
                 } else {
                     $scope.isDateValid = true;
                 }
-                var newEventFlag = false;
-                var oldId;
                 if ($scope.newEvent.id) {
-                    $scope.newEvent.title = $scope.newEvent.partner + ' edited';
+
+
+                    $scope.newEvent.title = $scope.newEvent.partner;
                     //this event is being edited not created
                     $scope.newEvent.start = dateStart;
                     $scope.newEvent.end = dateEnd;
+
+                    if (isRepeatingEvent($scope.newEvent)) {
+                        removeEventFromTempRepeating($scope.newEvent);
+                        $scope.tempRepeatingEvents.push(generateEventsFormMonth($scope.visibleCalendarStart, $scope.visibleCalendarEnd, $scope.newEvent.repeatingEvent.value, $scope.newEvent));
+                        modifyRepeatingEvent($scope.newEvent);
+                    }
+
 
                     $scope.myCalendar.fullCalendar('updateEvent', $scope.newEvent.id);
 
@@ -353,15 +393,15 @@ angular.module('ivkalendar.controllers', ['ui.calendar', 'ui.bootstrap'])
 
                 var event = {};
 
-                if ($scope.newEvent.repeatingEvent.value !== -1) {
+                if (isRepeatingEvent($scope.newEvent)) {
                     var repEvent = {
                         id: generateNewId(),
                         allDay: false,
                         title: $scope.newEvent.partner,
                         start: dateStart,
                         end: dateEnd,
-                        repeatingEvent: $scope.newEvent.repeatingEvent,
                         className: ['openSesame'],
+                        repeatingEvent: $scope.newEvent.repeatingEvent,
                         timeStart: $scope.newEvent.timeStart,
                         timeEnd: $scope.newEvent.timeEnd,
                         partner: $scope.newEvent.partner
@@ -391,7 +431,6 @@ angular.module('ivkalendar.controllers', ['ui.calendar', 'ui.bootstrap'])
                 $scope.myCalendar.fullCalendar('render');
 
                 $scope.cancelEventCreation();
-//                $scope.dayAgendaShowing = false;
             };
 
 
@@ -429,8 +468,12 @@ angular.module('ivkalendar.controllers', ['ui.calendar', 'ui.bootstrap'])
                                 title: eventsByDay[e].title,
                                 start: new Date(eventsByDay[e].start),
                                 end: new Date(eventsByDay[e].end),
+                                className: eventsByDay[e].className,
                                 repeatingEvent: eventsByDay[e].repeatingEvent,
-                                className: ['openSesame']
+                                timeStart: eventsByDay[e].timeStart,
+                                timeEnd: eventsByDay[e].timeEnd,
+                                partner: eventsByDay[e].partner
+
                             };
 
                             newE.start.setDate(column_date.getDate());
@@ -463,7 +506,6 @@ angular.module('ivkalendar.controllers', ['ui.calendar', 'ui.bootstrap'])
 
             function generateNewId() {
                 return new Date().getTime() + Math.floor(Math.random()) * 500;
-//                return Math.floor(Math.random() * 1000);//todo generate unique id
             }
 
             function parseTime(timeStr, dt) {
