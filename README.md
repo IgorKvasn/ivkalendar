@@ -11,9 +11,9 @@ Technologies used:
  - some auxiliary tools such as Grunt and Bower
 
   
-Screen resolution optimized for *iPhone 4* (however migrate it to any other mobile platform is just a matter of minutes... thx to Phonegap).
+Sidenote: screen resolution optimized for *iPhone 4*.
 
-Installation
+Build instructions
 ------------
 **Step 1.** 
 
