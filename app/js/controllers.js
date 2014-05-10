@@ -10,11 +10,63 @@ angular.module('ivkalendar.controllers', ['ui.calendar', 'ui.bootstrap'])
         function ($scope, _) {
 
 
-            /*------------localStorage test-----------
+            $scope.events = {};
+            $scope.events.oneTime = [
+//                {id: 1, title: 'Long Event', start: new Date(y, m, d - 5), end: new Date(y, m, d - 2)},
+//                {id: 2, title: 'Birthday Party', start: new Date(y, m, d + 1, 19, 0), end: new Date(y, m, d + 1, 22, 30), allDay: false}
+            ];
 
-             window.localStorage.setItem('newsArticle12', 'localData');
+            $scope.tempRepeatingEvents = [  ];
 
-             console.log("hello " + window.localStorage.getItem('newsArticle12'));*/
+            $scope.events.repeating = [];
+
+            function copyEvent(oldEvent) {
+                return  {
+                    id: oldEvent.id,
+                    allDay: oldEvent.allDay,
+                    title: oldEvent.title,
+                    start: new Date(oldEvent.start),
+                    end: new Date(oldEvent.end),
+                    className: oldEvent.className,
+                    repeatingEvent: oldEvent.repeatingEvent,
+                    timeStart: new Date(oldEvent.timeStart),
+                    timeEnd: new Date(oldEvent.timeEnd),
+                    partner: oldEvent.partner
+                };
+            }
+
+            function saveEventsToLocalStorage() {
+                var oneTime = [];
+                _.forEach($scope.events.oneTime, function (e) {
+                    oneTime = oneTime.concat(copyEvent(e));
+                });
+
+                window.localStorage.setItem('ivkalendar_events_onetime', JSON.stringify(oneTime));
+
+                var repeating = [];
+                _.forEach($scope.events.repeating, function (e) {
+                    repeating = repeating.concat(copyEvent(e));
+                });
+
+                window.localStorage.setItem('ivkalendar_events_onetime', JSON.stringify(oneTime));
+                window.localStorage.setItem('ivkalendar_events_repeating', JSON.stringify(repeating));
+            }
+
+            //------load all events
+            $scope.events.oneTime = angular.fromJson(window.localStorage.getItem('ivkalendar_events_onetime'));
+            $scope.events.repeating = angular.fromJson(window.localStorage.getItem('ivkalendar_events_repeating'));
+
+            //convert time from string to date
+            function convertTimeForEvents(eventArray) {
+                _.forEach(eventArray, function (e) {
+                    e.start = new Date(e.start);
+                    e.end = new Date(e.end);
+                    e.timeStart = new Date(e.timeStart);
+                    e.timeEnd = new Date(e.timeEnd);
+                });
+            }
+            convertTimeForEvents($scope.events.oneTime);
+            convertTimeForEvents($scope.events.repeating);
 
             var date = new Date();
             var d = date.getDate();
@@ -54,26 +106,16 @@ angular.module('ivkalendar.controllers', ['ui.calendar', 'ui.bootstrap'])
             });
 
 
-            /* event source that contains custom events on the scope */
-            $scope.events = {};
-            $scope.events.oneTime = [
-                {id: 1, title: 'Long Event', start: new Date(y, m, d - 5), end: new Date(y, m, d - 2)},
-                {id: 2, title: 'Birthday Party', start: new Date(y, m, d + 1, 19, 0), end: new Date(y, m, d + 1, 22, 30), allDay: false}
-            ];
 
-            $scope.tempRepeatingEvents = [  ];
-
-            $scope.events.repeating = [];
-
-            $scope.events.repeating.push({
-                id: 1,
-                allDay: false,
-                title: "moj repeating",
-                start: new Date(y, m, d + 1, 10, 0),
-                end: new Date(y, m, d + 1, 10, 30),
-                repeatingEvent: $scope.repeatingDays[1],
-                className: ['repeatEvent']
-            });
+//            $scope.events.repeating.push({
+//                id: 1,
+//                allDay: false,
+//                title: "moj repeating",
+//                start: new Date(y, m, d + 1, 10, 0),
+//                end: new Date(y, m, d + 1, 10, 30),
+//                repeatingEvent: $scope.repeatingDays[1],
+//                className: ['repeatEvent']
+//            });
 
             /* event source that calls a function on every view switch */
             $scope.eventsF = function (start, end, callback) {
@@ -266,7 +308,6 @@ angular.module('ivkalendar.controllers', ['ui.calendar', 'ui.bootstrap'])
                     $scope.events.repeating = removeEventFromArray(event, $scope.events.repeating);
                     $scope.tempRepeatingEvents = [];
                 }
-//                $scope.myCalendar.fullCalendar('removeEvents', event.id);
                 $scope.myCalendar.fullCalendar('refetchEvents');
                 $scope.myCalendar.fullCalendar('rerenderEvents');
             }
@@ -299,19 +340,7 @@ angular.module('ivkalendar.controllers', ['ui.calendar', 'ui.bootstrap'])
 
                         if (column_date.getDay() !== day) continue;
 
-                        var newE = {
-                            id: e.id,
-                            allDay: e.allDay,
-                            title: e.title,
-                            start: new Date(e.start),
-                            end: new Date(e.end),
-                            repeatingEvent: e.repeatingEvent,
-                            className: ['openSesame'],
-                            timeStart: e.timeStart,
-                            timeEnd: e.timeEnd,
-                            partner: e.partner
-                        };
-
+                        var newE = copyEvent(e);
                         newE.start.setDate(column_date.getDate());
                         newE.start.setMonth(column_date.getMonth());
                         newE.end.setDate(column_date.getDate());
@@ -436,6 +465,8 @@ angular.module('ivkalendar.controllers', ['ui.calendar', 'ui.bootstrap'])
                 $scope.myCalendar.fullCalendar('render');
 
                 $scope.cancelEventCreation();
+
+                saveEventsToLocalStorage();
             };
 
 
@@ -466,21 +497,7 @@ angular.module('ivkalendar.controllers', ['ui.calendar', 'ui.bootstrap'])
 
                         var eventsByDay = findEventsByDay(column_date.getDay());
                         for (var e in eventsByDay) {
-
-                            var newE = {
-                                id: eventsByDay[e].id,
-                                allDay: eventsByDay[e].allDay,
-                                title: eventsByDay[e].title,
-                                start: new Date(eventsByDay[e].start),
-                                end: new Date(eventsByDay[e].end),
-                                className: eventsByDay[e].className,
-                                repeatingEvent: eventsByDay[e].repeatingEvent,
-                                timeStart: eventsByDay[e].timeStart,
-                                timeEnd: eventsByDay[e].timeEnd,
-                                partner: eventsByDay[e].partner
-
-                            };
-
+                            var newE = copyEvent(eventsByDay[e]);
                             newE.start.setDate(column_date.getDate());
                             newE.start.setMonth(column_date.getMonth());
                             newE.end.setDate(column_date.getDate());
