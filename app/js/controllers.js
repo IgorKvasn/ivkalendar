@@ -85,7 +85,7 @@ angular.module('ivkalendar.controllers', ['ui.calendar', 'ui.bootstrap'])
                 console.log("event clicked: " + event.id);
                 if (jsEvent.name === "agendaDay") {
                     $scope.newEvent = event;
-                    $scope.newEvent.partner = event.partner + " edited";
+                    $scope.newEvent.partner = event.partner;
                     $scope.newEvent.time = event.start;
                     $scope.addEventShowing = true;
                 } else {
@@ -105,11 +105,6 @@ angular.module('ivkalendar.controllers', ['ui.calendar', 'ui.bootstrap'])
                 if (canAdd === 0) {
                     sources.push(source);
                 }
-            };
-
-            /* remove event */
-            $scope.remove = function (index) {
-                $scope.events.oneTime.splice(index, 1);
             };
 
             /* Change View */
@@ -279,7 +274,7 @@ angular.module('ivkalendar.controllers', ['ui.calendar', 'ui.bootstrap'])
 
             $scope.deleteEvent = function () {
                 removeEvent($scope.newEvent);
-
+                $scope.myCalendar.fullCalendar('removeEvents', $scope.newEvent.id);
                 $scope.myCalendar.fullCalendar('refetchEvents');
                 $scope.myCalendar.fullCalendar('rerenderEvents');
                 $scope.myCalendar.fullCalendar('render');
