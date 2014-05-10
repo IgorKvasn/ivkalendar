@@ -1,3 +1,6 @@
+//todo ngTouch for swipe events - left/right for navigation in calendar; down for "goto today"
+
+
 'use strict';
 
 /* Controllers */
@@ -5,6 +8,13 @@
 angular.module('ivkalendar.controllers', ['ui.calendar', 'ui.bootstrap'])
     .controller('IvkalendarCtrl', ['$scope', '_',
         function ($scope, _) {
+
+
+            /*------------localStorage test-----------
+
+             window.localStorage.setItem('newsArticle12', 'localData');
+
+             console.log("hello " + window.localStorage.getItem('newsArticle12'));*/
 
             var date = new Date();
             var d = date.getDate();
@@ -44,12 +54,6 @@ angular.module('ivkalendar.controllers', ['ui.calendar', 'ui.bootstrap'])
             });
 
 
-            /* event source that pulls from google.com */
-//            $scope.eventSource = {
-//                url: "http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic",
-//                className: 'gcal-event',           // an option!
-//                currentTimezone: 'America/Chicago' // an option!
-//            };
             /* event source that contains custom events on the scope */
             $scope.events = {};
             $scope.events.oneTime = [
@@ -137,6 +141,7 @@ angular.module('ivkalendar.controllers', ['ui.calendar', 'ui.bootstrap'])
             /* config object */
             $scope.uiConfig = {
                 calendar: {
+                    theme: true,
                     contentHeight: 400,
                     axisFormat: 'HH:mm',
                     editable: false,
@@ -158,7 +163,7 @@ angular.module('ivkalendar.controllers', ['ui.calendar', 'ui.bootstrap'])
                     timeFormat: {
                         agendaDay: 'HH:mm { - HH:mm}',
                         agendaWeek: '',
-                        '':'' //this will cause to not show time on month view or week view
+                        '': '' //this will cause to not show time on month view or week view
                     },
                     buttonText: {
                         prev: '&lsaquo;', // <
@@ -179,7 +184,7 @@ angular.module('ivkalendar.controllers', ['ui.calendar', 'ui.bootstrap'])
                     dayNamesShort: ["Po", "Ut", "Str", "Štv", "Pi", "So", "Ne"],
                     dayRender: function (date, cell) {
                         if ((date.setHours(0, 0, 0, 0)) === (new Date()).setHours(0, 0, 0, 0)) {
-                            cell.css("background-color", "red");
+//                            cell.css("background-color", "red");
                         }
 
                     }

@@ -1,12 +1,18 @@
+<style>
+    h2{
+        font-size: 15px;
+    }
+</style>
+
 <div class="container-fluid" ng-hide="addEventShowing" style="margin-top: 20px;">
 
     <div class="row">
         <div class="container-fluid" ng-hide="dayAgendaShowing">
             <div class="row">
-                <switch class="col-xs-1 col-sm-1" ng-model="calendarView"></switch>
-                <div class="btn btn-default pull-right" ng-click="calendarToday()">Dnes</div>
-                <div class="btn btn-default pull-right" ng-click="calendarNext()">&gt;</div>
-                <div class="btn btn-default pull-right" ng-click="calendarBack()">&lt;</div>
+                <!--<switch class="col-xs-1 col-sm-1" ng-model="calendarView"></switch>-->
+                <!--<div class="btn btn-default pull-right" ng-click="calendarToday()">Dnes</div>-->
+                <!--<div class="btn btn-default pull-right" ng-click="calendarNext()">&gt;</div>-->
+                <!--<div class="btn btn-default pull-right" ng-click="calendarBack()">&lt;</div>-->
             </div>
         </div>
         <div class="container-fluid" ng-show="dayAgendaShowing" style="margin-bottom: 10px;">
